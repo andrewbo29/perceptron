@@ -6,15 +6,16 @@ class Perceptron
 public:
     Perceptron() = default;
     Perceptron(const vector<vector<double>> &data);
-    vector<double> *get_weights();
     void train(vector<vector<double>> &data, vector<int> &labels, int iter_number);
-    void prediction(vector<vector<double>> &data, vector<int> &labels);
+    inline vector<int> predict(vector<vector<double>> &data, vector<int> &labels);
+
+    friend void setMisclass(const vector<vector<double>> *data, const vector<int> *labels, const Perceptron *perc,
+                            vector<vector<double>> &misClass, vector<int> &misClassLabels,
+                            vector<vector<double>> &trueClass, vector<int> &trueClassLabels);
 private:
     std::vector<double> weights;
 };
 
-void setMisclass(const vector<vector<double>> *data, const vector<int> *labels, Perceptron *perc,
-                 vector<vector<double>> &misClass, vector<int> &misClassLabels,
-                 vector<vector<double>> &trueClass, vector<int> &trueClassLabels);
-
 void enterData (vector<vector<double>> &data, vector<int> &labels);
+
+void showPredictResults(vector<vector<double>> &data, vector<int> &labels, vector<int> &predicted);

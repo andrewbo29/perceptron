@@ -22,12 +22,14 @@ int main()
 
     perc.train(data, labels, iter_number);
 
-    perc.prediction(data, labels);
+    vector<int> predict = perc.predict(data, labels);
+
+    showPredictResults(data, labels, predict);
 
     return 0;
 }
 
-void setMisclass(const vector<vector<double>> *data, const vector<int> *labels, Perceptron *perc,
+void setMisclass(const vector<vector<double>> *data, const vector<int> *labels, const Perceptron *perc,
                  vector<vector<double>> &misClass, vector<int> &misClassLabels,
                  vector<vector<double>> &trueClass, vector<int> &trueClassLabels) {
     misClass.clear();
@@ -35,13 +37,11 @@ void setMisclass(const vector<vector<double>> *data, const vector<int> *labels, 
     trueClass.clear();
     trueClassLabels.clear();
 
-    vector<double> *percWeights = perc->get_weights();
-
     for (decltype(data->size()) i = 0; i < data->size(); ++i) {
         vector<double> data_elem = (*data)[i];
         double sum = 0;
         for (decltype(data_elem.size()) j = 0; j < data_elem.size(); ++j) {
-            sum += (*percWeights)[j] * data_elem[j];
+            sum += perc->weights[j] * data_elem[j];
         }
         int pred = (sum > 0) ? 1 : -1;
 
@@ -99,7 +99,7 @@ Perceptron::Perceptron(const vector<vector<double>> &data) {
         weights.push_back(init_weight);
     }
 
-    cout << "Weights" << endl;
+    cout << "Initial weights:" << endl;
     for (auto w : weights) {
         cout << w << "\t";
     }
@@ -107,7 +107,6 @@ Perceptron::Perceptron(const vector<vector<double>> &data) {
 }
 
 void Perceptron::train(vector<vector<double>> &data, vector<int> &labels, int iter_number) {
-
     vector<vector<double>> misClass;
     vector<int> misClassLabels;
 
@@ -118,7 +117,7 @@ void Perceptron::train(vector<vector<double>> &data, vector<int> &labels, int it
 
     int done_iter = 0;
     while (!misClass.empty() && done_iter < iter_number) {
-        cout << "Learning iteration number " << done_iter << endl;
+        cout << "\nLearning iteration number " << done_iter << endl;
         ++done_iter;
 
         int max_ind = misClass.size();
@@ -133,7 +132,7 @@ void Perceptron::train(vector<vector<double>> &data, vector<int> &labels, int it
 
         setMisclass(&data, &labels, this, misClass, misClassLabels, trueClass, trueClassLabels);
 
-        cout << "Weights" << endl;
+        cout << "Weights:" << endl;
         for (auto w : weights) {
             cout << w << "\t";
         }
@@ -143,11 +142,9 @@ void Perceptron::train(vector<vector<double>> &data, vector<int> &labels, int it
     return;
 }
 
-vector<double> *Perceptron::get_weights() {
-    return &weights;
-}
+vector<int> Perceptron::predict(vector<vector<double>> &data, vector<int> &labels) {
+    vector<int> predicted;
 
-void Perceptron::prediction(vector<vector<double>> &data, vector<int> &labels) {
     for (decltype(data.size()) i = 0; i < data.size(); ++i) {
         vector<double> data_elem = data[i];
         double sum = 0;
@@ -156,11 +153,22 @@ void Perceptron::prediction(vector<vector<double>> &data, vector<int> &labels) {
         }
         int pred = (sum > 0) ? 1 : -1;
 
-        cout << "Data: ";
-        for (auto data_point : data_elem) {
-            cout << data_point << " ";
+        predicted.push_back(pred);
+    }
+
+    return predicted;
+}
+
+void showPredictResults(vector<vector<double>> &data, vector<int> &labels, vector<int> &predicted) {
+    cout << "\nPrediction results:" << endl;
+
+    for (decltype(data.size()) i = 0; i < data.size(); ++i) {
+        vector<double> data_elem = data[i];
+        cout << "Data point: ";
+        for (decltype(data_elem.size()) j = 0; j < data_elem.size() - 1; ++j) {
+            cout << data_elem[j] << " ";
         }
-        cout << "Label: " << labels[i] << " " << "Predict: " << pred << endl;
+        cout << "Label: " << labels[i] << " " << "Predict: " << predicted[i] << endl;
     }
 
     char c1;
