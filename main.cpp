@@ -120,11 +120,9 @@ void Perceptron::train(vector<vector<double>> &data, vector<int> &labels, int it
         cout << "\nLearning iteration number " << done_iter << endl;
         ++done_iter;
 
-        int max_ind = misClass.size();
-        int rand_ind = rand() % max_ind;
-        vector<double> rand_elem = misClass[rand_ind];
-
-        //cout << rand_elem.size() << "\t" << weights.size() << endl;
+        unsigned long max_ind = misClass.size();
+        unsigned long rand_ind = rand() % max_ind;
+        vector<double> &rand_elem = misClass[rand_ind];
 
         for (decltype(weights.size()) k = 0; k < weights.size(); ++k) {
             weights[k] += misClassLabels[rand_ind] * rand_elem[k];
@@ -146,7 +144,7 @@ vector<int> Perceptron::predict(vector<vector<double>> &data, vector<int> &label
     vector<int> predicted;
 
     for (decltype(data.size()) i = 0; i < data.size(); ++i) {
-        vector<double> data_elem = data[i];
+        vector<double> &data_elem = data[i];
         double sum = 0;
         for (decltype(data_elem.size()) j = 0; j < data_elem.size(); ++j) {
             sum += weights[j] * data_elem[j];
@@ -163,7 +161,7 @@ void showPredictResults(vector<vector<double>> &data, vector<int> &labels, vecto
     cout << "\nPrediction results:" << endl;
 
     for (decltype(data.size()) i = 0; i < data.size(); ++i) {
-        vector<double> data_elem = data[i];
+        vector<double> &data_elem = data[i];
         cout << "Data point: ";
         for (decltype(data_elem.size()) j = 0; j < data_elem.size() - 1; ++j) {
             cout << data_elem[j] << " ";
@@ -171,10 +169,10 @@ void showPredictResults(vector<vector<double>> &data, vector<int> &labels, vecto
         cout << "Label: " << labels[i] << " " << "Predict: " << predicted[i] << endl;
     }
 
-    char c1;
-    while (cin >> c1) {
-        cout << c1 << endl;
+    cin.get();
+    while (1) {
+        if (cin.get() == '\n') {
+            return;
+        }
     }
-
-    return;
 }
