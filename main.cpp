@@ -9,6 +9,8 @@ using namespace std;
 #include "Perceptron.h"
 #endif
 
+const string Perceptron::name = "Perceptron";
+
 int main()
 {
     vector<vector<double>> data;
@@ -18,11 +20,13 @@ int main()
 
     Perceptron perc = Perceptron(data);
 
+    cout << "\nStart " << Perceptron::getName() << " learning" << endl;
+
     int iter_number = 5;
 
     perc.train(data, labels, iter_number);
 
-    vector<int> predict = perc.predict(data, labels);
+    vector<int> predict = perc.predict(data);
 
     showPredictResults(data, labels, predict);
 
@@ -58,7 +62,7 @@ void setMisclass(const vector<vector<double>> *data, const vector<int> *labels, 
     return;
 }
 
-void enterData (vector<vector<double>> &data, vector<int> &labels) {
+void enterData(vector<vector<double>> &data, vector<int> &labels) {
     char c = 'y';
 
     while (c == 'y') {
@@ -140,7 +144,7 @@ void Perceptron::train(vector<vector<double>> &data, vector<int> &labels, int it
     return;
 }
 
-vector<int> Perceptron::predict(vector<vector<double>> &data, vector<int> &labels) {
+vector<int> Perceptron::predict(vector<vector<double>> &data) {
     vector<int> predicted;
 
     for (decltype(data.size()) i = 0; i < data.size(); ++i) {
