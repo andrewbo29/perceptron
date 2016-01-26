@@ -21,3 +21,5 @@ private:
 void enterData(vector<vector<double>> &data, vector<int> &labels);
 
 void showPredictResults(vector<vector<double>> &data, vector<int> &labels, vector<int> &predicted);
+
+void readData(string fileNmae, vector<vector<double>> &data, vector<int> &labels);

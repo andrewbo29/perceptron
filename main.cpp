@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <stdexcept>
+#include <sstream>
+#include <fstream>
 
 using namespace std;
 
@@ -16,7 +18,8 @@ int main()
     vector<vector<double>> data;
     vector<int> labels;
 
-    enterData(data, labels);
+//    enterData(data, labels);
+    readData("/home/boyarov/Projects/cpp/perceptron/data.txt", data, labels);
 
     Perceptron perc = Perceptron(data);
 
@@ -179,4 +182,31 @@ void showPredictResults(vector<vector<double>> &data, vector<int> &labels, vecto
             return;
         }
     }
+}
+
+void readData(string fileName, vector<vector<double>> &data, vector<int> &labels) {
+    string line;
+    int label;
+    double dataPoint;
+
+    ifstream input(fileName);
+
+    while (getline(input, line)) {
+        vector<double> dataElem;
+        istringstream record(line);
+        if (record >> label) {
+            labels.push_back(label);
+        } else {
+            cerr << "Error in reading data" << endl;
+            return;
+        }
+
+        while (record >> dataPoint) {
+            dataElem.push_back(dataPoint);
+        }
+        dataElem.push_back(1.0);
+        data.push_back(dataElem);
+    }
+
+    return;
 }
