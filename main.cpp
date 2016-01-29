@@ -11,27 +11,33 @@ using namespace std;
 #include "Perceptron.h"
 #endif
 
+#include "imageProcessing.h"
+
 const string Perceptron::name = "Perceptron";
 
 int main()
 {
-    vector<vector<double>> data;
-    vector<int> labels;
+//    vector<vector<double>> data;
+//    vector<int> labels;
+//
+////    enterData(data, labels);
+//    readData("/home/boyarov/Projects/cpp/perceptron/data.txt", data, labels);
+//
+//    Perceptron perc = Perceptron(data);
+//
+//    cout << "\nStart " << Perceptron::getName() << " learning" << endl;
+//
+//    int iter_number = 5;
+//
+//    perc.train(data, labels, iter_number);
+//
+//    vector<int> predict = perc.predict(data);
+//
+//    showPredictResults(data, labels, predict);
 
-//    enterData(data, labels);
-    readData("/home/boyarov/Projects/cpp/perceptron/data.txt", data, labels);
-
-    Perceptron perc = Perceptron(data);
-
-    cout << "\nStart " << Perceptron::getName() << " learning" << endl;
-
-    int iter_number = 5;
-
-    perc.train(data, labels, iter_number);
-
-    vector<int> predict = perc.predict(data);
-
-    showPredictResults(data, labels, predict);
+    string imageFname = "/media/datab/bases/mnist/train/0/00001.png";
+    Mat image = loadGrayScaleImage(imageFname);
+    showImage(image);
 
     return 0;
 }
