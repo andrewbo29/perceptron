@@ -26,3 +26,12 @@ void showImage(Mat image) {
     waitKey(0);
     return;
 }
+
+vector<double> readImage(string imageFname) {
+    Mat image = loadGrayScaleImage(imageFname);
+    vector<double> dataElem;
+
+    dataElem.assign(image.datastart, image.dataend);
+
+    return dataElem;
+}

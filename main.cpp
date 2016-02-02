@@ -36,8 +36,10 @@ int main()
 //    showPredictResults(data, labels, predict);
 
     string imageFname = "/media/datab/bases/mnist/train/0/00001.png";
-    Mat image = loadGrayScaleImage(imageFname);
-    showImage(image);
+
+    vector<double> data = readImage(imageFname);
+
+    cout << data.size() << endl;
 
     return 0;
 }
