@@ -22,24 +22,31 @@ int main()
 //
 ////    enterData(data, labels);
 //    readData("/home/boyarov/Projects/cpp/perceptron/data.txt", data, labels);
-//
-//    Perceptron perc = Perceptron(data);
-//
-//    cout << "\nStart " << Perceptron::getName() << " learning" << endl;
-//
-//    int iter_number = 5;
-//
-//    perc.train(data, labels, iter_number);
-//
-//    vector<int> predict = perc.predict(data);
-//
+
+    vector<int> labels;
+
+    string dirName = "/home/boyarov/Projects/cpp/data/mnist_data_0/";
+    vector<vector<double>> data = readImagesDir(dirName);
+    labels.insert(labels.end(), data.size(), -1);
+
+    dirName = "/home/boyarov/Projects/cpp/data/mnist_data_1/";
+    vector<vector<double>> newData = readImagesDir(dirName);
+    data.insert(data.end(), newData.begin(), newData.end());
+    labels.insert(labels.end(), newData.size(), 1);
+
+    Perceptron perc = Perceptron(data);
+
+    cout << "\nStart " << Perceptron::getName() << " learning" << endl;
+
+    int iter_number = 5;
+
+    perc.train(data, labels, iter_number);
+
+    vector<int> predict = perc.predict(data);
+
+    cout << predict.size() << endl;
+
 //    showPredictResults(data, labels, predict);
-
-    string imageFname = "/media/datab/bases/mnist/train/0/00001.png";
-
-    vector<double> data = readImage(imageFname);
-
-    cout << data.size() << endl;
 
     return 0;
 }

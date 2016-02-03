@@ -2,6 +2,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include "imageProcessing.h"
+#include <dirent.h>
 
 using namespace std;
 using namespace cv;
@@ -11,9 +12,7 @@ Mat loadGrayScaleImage(string imageFname) {
     image = imread(imageFname, CV_LOAD_IMAGE_GRAYSCALE);
 
     if (!image.data) {
-        cout << "Could not open or find the image" << std::endl;
-        Mat emptyImage;
-        return emptyImage;
+        throw runtime_error("Could not open or find the image");
     }
 
     return image;
@@ -34,4 +33,24 @@ vector<double> readImage(string imageFname) {
     dataElem.assign(image.datastart, image.dataend);
 
     return dataElem;
+}
+
+vector<vector<double>> readImagesDir(string dirName) {
+    vector<vector<double>> data;
+
+    DIR *dir;
+    struct dirent *ent;
+    if ((dir = opendir(dirName.c_str())) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            string imageFname = dirName + ent->d_name;
+            try {
+                data.push_back(readImage(imageFname));
+            } catch (runtime_error err) {
+                cout << err.what() << endl;
+            }
+        }
+        closedir(dir);
+    }
+
+    return data;
 }

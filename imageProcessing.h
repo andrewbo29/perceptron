@@ -7,3 +7,5 @@ Mat loadGrayScaleImage(string imageFname);
 void showImage(Mat image);
 
 vector<double> readImage(string imageFname);
+
+vector<vector<double>> readImagesDir(string dirName);
