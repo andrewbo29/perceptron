@@ -17,41 +17,32 @@ const string Perceptron::name = "Perceptron";
 
 int main()
 {
-//    vector<vector<double>> data;
-//    vector<int> labels;
-//
-////    enterData(data, labels);
-//    readData("/home/boyarov/Projects/cpp/perceptron/data.txt", data, labels);
-
+    vector<vector<double>> data;
     vector<int> labels;
 
-    string dirName = "/home/boyarov/Projects/cpp/data/mnist_data_0/";
-    vector<vector<double>> data = readImagesDir(dirName);
-    labels.insert(labels.end(), data.size(), -1);
+//    enterData(data, labels);
+//    readData("/home/boyarov/Projects/cpp/perceptron/data.txt", data, labels);
 
-    dirName = "/home/boyarov/Projects/cpp/data/mnist_data_1/";
-    vector<vector<double>> newData = readImagesDir(dirName);
-    data.insert(data.end(), newData.begin(), newData.end());
-    labels.insert(labels.end(), newData.size(), 1);
+    string posDirName = "/home/boyarov/Projects/cpp/data/mnist_data_0/";
+    string negDirName = "/home/boyarov/Projects/cpp/data/mnist_data_1/";
+    readImagesData(posDirName, negDirName, data, labels);
 
     Perceptron perc = Perceptron(data);
 
     cout << "\nStart " << Perceptron::getName() << " learning" << endl;
 
-    int iter_number = 5;
+    int iter_number = 20;
 
     perc.train(data, labels, iter_number);
 
     vector<int> predict = perc.predict(data);
 
-    cout << predict.size() << endl;
-
-//    showPredictResults(data, labels, predict);
+    cout << "\nPrediction error: " << getPredictionError(labels, predict) << endl;
 
     return 0;
 }
 
-void setMisclass(const vector<vector<double>> *data, const vector<int> *labels, const Perceptron *perc,
+double setMisclass(const vector<vector<double>> *data, const vector<int> *labels, const Perceptron *perc,
                  vector<vector<double>> &misClass, vector<int> &misClassLabels,
                  vector<vector<double>> &trueClass, vector<int> &trueClassLabels) {
     misClass.clear();
@@ -77,7 +68,7 @@ void setMisclass(const vector<vector<double>> *data, const vector<int> *labels, 
         }
     }
 
-    return;
+    return double(misClass.size()) / data->size();
 }
 
 void enterData(vector<vector<double>> &data, vector<int> &labels) {
@@ -120,12 +111,6 @@ Perceptron::Perceptron(const vector<vector<double>> &data) {
         double init_weight = static_cast<double>(rand()) / (RAND_MAX);
         weights.push_back(init_weight);
     }
-
-    cout << "Initial weights:" << endl;
-    for (auto w : weights) {
-        cout << w << "\t";
-    }
-    cout << endl;
 }
 
 void Perceptron::train(vector<vector<double>> &data, vector<int> &labels, int iter_number) {
@@ -150,13 +135,9 @@ void Perceptron::train(vector<vector<double>> &data, vector<int> &labels, int it
             weights[k] += misClassLabels[rand_ind] * rand_elem[k];
         }
 
-        setMisclass(&data, &labels, this, misClass, misClassLabels, trueClass, trueClassLabels);
+        trainError = setMisclass(&data, &labels, this, misClass, misClassLabels, trueClass, trueClassLabels);
 
-        cout << "Weights:" << endl;
-        for (auto w : weights) {
-            cout << w << "\t";
-        }
-        cout << endl;
+        cout << "Train error: " << trainError << endl;
     }
 
     return;
@@ -224,4 +205,25 @@ void readData(string fileName, vector<vector<double>> &data, vector<int> &labels
     }
 
     return;
+}
+
+void readImagesData(string posDirName, string negDirName, vector<vector<double>> &data, vector<int> &labels) {
+    vector<vector<double>> posData = readImagesDir(posDirName);
+    data.insert(data.end(), posData.begin(), posData.end());
+    labels.insert(labels.end(), posData.size(), 1);
+
+    vector<vector<double>> negData = readImagesDir(negDirName);
+    data.insert(data.end(), negData.begin(), negData.end());
+    labels.insert(labels.end(), negData.size(), -1);
+}
+
+double getPredictionError(vector<int> &labels, vector<int> &predicted) {
+    int misClassSum = 0;
+    for (size_t i = 0; i < labels.size(); ++i) {
+        if (labels[i] != predicted[i]) {
+            misClassSum += 1;
+        }
+    }
+
+    return double(misClassSum) / labels.size();
 }
