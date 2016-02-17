@@ -17,27 +17,47 @@ const string Perceptron::name = "Perceptron";
 
 int main()
 {
-    vector<vector<double>> data;
-    vector<int> labels;
 
 //    enterData(data, labels);
 //    readData("/home/boyarov/Projects/cpp/perceptron/data.txt", data, labels);
 
-    string posDirName = "/home/boyarov/Projects/cpp/data/mnist_data_0/";
-    string negDirName = "/home/boyarov/Projects/cpp/data/mnist_data_1/";
-    readImagesData(posDirName, negDirName, data, labels);
+//    string posDirName = "/home/boyarov/Projects/cpp/data/mnist_data_0/";
+//    string negDirName = "/home/boyarov/Projects/cpp/data/mnist_data_1/";
 
-    Perceptron perc = Perceptron(data);
+    cout << "Load train data" << endl;
+
+    vector<vector<double>> dataTrain;
+    vector<int> labelsTrain;
+
+    string posDirNameTrain = "/media/datab/bases/mnist/train/0";
+    string negDirNameTrain = "/media/datab/bases/mnist/train/1";
+
+    readImagesData(posDirNameTrain, negDirNameTrain, dataTrain, labelsTrain);
+
+    Perceptron perc = Perceptron(dataTrain);
 
     cout << "\nStart " << Perceptron::getName() << " learning" << endl;
 
-    int iter_number = 20;
+    int iter_number = 1000;
 
-    perc.train(data, labels, iter_number);
+    perc.train(dataTrain, labelsTrain, iter_number);
 
-    vector<int> predict = perc.predict(data);
+    dataTrain.clear();
+    labelsTrain.clear();
 
-    cout << "\nPrediction error: " << getPredictionError(labels, predict) << endl;
+    cout << "Load test data" << endl;
+
+    vector<vector<double>> dataTest;
+    vector<int> labelsTest;
+
+    string posDirNameTest = "/media/datab/bases/mnist/test/0";
+    string negDirNameTest = "/media/datab/bases/mnist/test/1";
+
+    readImagesData(posDirNameTest, negDirNameTest, dataTest, labelsTest);
+
+    vector<int> predict = perc.predict(dataTest);
+
+    cout << "\nPrediction error: " << getPredictionError(labelsTest, predict) << endl;
 
     return 0;
 }
@@ -124,7 +144,6 @@ void Perceptron::train(vector<vector<double>> &data, vector<int> &labels, int it
 
     int done_iter = 0;
     while (!misClass.empty() && done_iter < iter_number) {
-        cout << "\nLearning iteration number " << done_iter << endl;
         ++done_iter;
 
         unsigned long max_ind = misClass.size();
@@ -137,7 +156,10 @@ void Perceptron::train(vector<vector<double>> &data, vector<int> &labels, int it
 
         trainError = setMisclass(&data, &labels, this, misClass, misClassLabels, trueClass, trueClassLabels);
 
-        cout << "Train error: " << trainError << endl;
+        if (done_iter % 50 == 0) {
+            cout << "\nLearning iteration number " << done_iter << endl;
+            cout << "Train error: " << trainError << endl;
+        }
     }
 
     return;

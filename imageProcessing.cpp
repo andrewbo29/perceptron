@@ -36,17 +36,19 @@ vector<double> readImage(string imageFname) {
 }
 
 vector<vector<double>> readImagesDir(string dirName) {
+    cout << "Read data from dir " << dirName <<endl;
+
     vector<vector<double>> data;
 
     DIR *dir;
     struct dirent *ent;
     if ((dir = opendir(dirName.c_str())) != NULL) {
         while ((ent = readdir(dir)) != NULL) {
-            string imageFname = dirName + ent->d_name;
+            string imageFname = dirName + "/" + ent->d_name;
             try {
                 data.push_back(readImage(imageFname));
             } catch (runtime_error err) {
-                cout << err.what() << endl;
+//                cout << err.what() << endl;
             }
         }
         closedir(dir);
