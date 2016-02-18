@@ -24,40 +24,56 @@ int main()
 //    string posDirName = "/home/boyarov/Projects/cpp/data/mnist_data_0/";
 //    string negDirName = "/home/boyarov/Projects/cpp/data/mnist_data_1/";
 
-    cout << "Load train data" << endl;
+//    cout << "Load train data" << endl;
+//
+//    vector<vector<double>> dataTrain;
+//    vector<int> labelsTrain;
+//
+//    string posDirNameTrain = "/media/datab/bases/mnist/train/0";
+//    string negDirNameTrain = "/media/datab/bases/mnist/train/1";
+//
+//    readImagesData(posDirNameTrain, negDirNameTrain, dataTrain, labelsTrain);
+//
+//    Perceptron perc = Perceptron(dataTrain);
+//
+//    cout << "\nStart " << Perceptron::getName() << " learning" << endl;
+//
+//    int iter_number = 1000;
+//
+//    perc.train(dataTrain, labelsTrain, iter_number);
+//
+//    cout << "Saving perceptron" << endl;
+//    string percFileName = "/home/boyarov/Projects/cpp/perceptron/perc.txt";
+//    perc.save(percFileName);
+//
+//    dataTrain.clear();
+//    labelsTrain.clear();
+//
+//    cout << "Load test data" << endl;
+//
+//    vector<vector<double>> dataTest;
+//    vector<int> labelsTest;
+//
+//    string posDirNameTest = "/media/datab/bases/mnist/test/0";
+//    string negDirNameTest = "/media/datab/bases/mnist/test/1";
+//
+//    readImagesData(posDirNameTest, negDirNameTest, dataTest, labelsTest);
+//
+//    vector<int> predict = perc.predict(dataTest);
+//
+//    cout << "\nPrediction error: " << getPredictionError(labelsTest, predict) << endl;
 
-    vector<vector<double>> dataTrain;
-    vector<int> labelsTrain;
+    Perceptron perc;
 
-    string posDirNameTrain = "/media/datab/bases/mnist/train/0";
-    string negDirNameTrain = "/media/datab/bases/mnist/train/1";
+    cout << "Load perceptron" << endl;
 
-    readImagesData(posDirNameTrain, negDirNameTrain, dataTrain, labelsTrain);
+    string percFileName = "/home/boyarov/Projects/cpp/perceptron/perc.txt";
+    perc.read(percFileName);
 
-    Perceptron perc = Perceptron(dataTrain);
+//    string imageFileName = "/media/datab/bases/mnist/test/0/00003.png";
+    string imageFileName = "/media/datab/bases/mnist/test/1/00002.png";
 
-    cout << "\nStart " << Perceptron::getName() << " learning" << endl;
-
-    int iter_number = 1000;
-
-    perc.train(dataTrain, labelsTrain, iter_number);
-
-    dataTrain.clear();
-    labelsTrain.clear();
-
-    cout << "Load test data" << endl;
-
-    vector<vector<double>> dataTest;
-    vector<int> labelsTest;
-
-    string posDirNameTest = "/media/datab/bases/mnist/test/0";
-    string negDirNameTest = "/media/datab/bases/mnist/test/1";
-
-    readImagesData(posDirNameTest, negDirNameTest, dataTest, labelsTest);
-
-    vector<int> predict = perc.predict(dataTest);
-
-    cout << "\nPrediction error: " << getPredictionError(labelsTest, predict) << endl;
+    perc.predictOne(imageFileName);
 
     return 0;
 }
@@ -248,4 +264,41 @@ double getPredictionError(vector<int> &labels, vector<int> &predicted) {
     }
 
     return double(misClassSum) / labels.size();
+}
+
+void Perceptron::save(string fname) {
+    ofstream output(fname);
+
+    for (auto const &w : weights) {
+        output << w << endl;
+    }
+
+    return;
+}
+
+void Perceptron::read(string fname) {
+    string line;
+    double w;
+
+    ifstream input(fname);
+
+    weights.clear();
+    while (getline(input, line)) {
+        istringstream record(line);
+        record >> w;
+        weights.push_back(w);
+    }
+}
+
+void Perceptron::predictOne(string fname) {
+    vector<double> dataElem = readImage(fname);
+
+    double sum = 0;
+    for (decltype(dataElem.size()) i = 0; i < dataElem.size(); ++i) {
+        sum += weights[i] * dataElem[i];
+    }
+    int pred = (sum > 0) ? 1 : -1;
+
+    cout << "Predicted class: " << pred << endl;
+    showImage(loadGrayScaleImage(fname));
 }

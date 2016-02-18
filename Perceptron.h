@@ -13,6 +13,9 @@ public:
                             vector<vector<double>> &misClass, vector<int> &misClassLabels,
                             vector<vector<double>> &trueClass, vector<int> &trueClassLabels);
     static string getName() { return name;}
+    void save(string fname);
+    void read(string fname);
+    void predictOne(string fname);
 private:
     const static string name;
     std::vector<double> weights;
